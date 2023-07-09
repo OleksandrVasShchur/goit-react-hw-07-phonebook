@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-// import PropTypes from 'prop-types';
 import css from '../Style/form.module.css';
 import { useDispatch } from 'react-redux';
-import { nanoid } from '@reduxjs/toolkit';
-import { addContactsSlice } from 'redux/contactsSlice';
+import { addContact } from 'redux/operations';
 import { useSelector } from 'react-redux/es/hooks/useSelector';
 import { selectContacts } from 'redux/selectors';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
@@ -27,17 +25,24 @@ const ContactForm = () => {
     evt.preventDefault();
 
     const newContact = {
-      id: nanoid(),
       name,
       number,
     };
-    if (contacts.find(contact => contact.name.toLowerCase() === newContact.name.toLowerCase())) {
-      Notify.warning(`${newContact.name} is already in contacts`);
+    if (
+      contacts.find(
+        contact =>
+          contact.name.toLowerCase() === newContact.name.toLowerCase() ||
+          contact.number === newContact.number
+      )
+    ) {
+      Notify.warning(
+        `${newContact.name} or ${newContact.number} is already in contacts`
+      );
       resetForm();
       return;
     }
 
-    dispatch(addContactsSlice(newContact));
+    dispatch(addContact(newContact));
     resetForm();
   };
 
@@ -82,6 +87,5 @@ const ContactForm = () => {
     </form>
   );
 };
-
 
 export default ContactForm;
